@@ -1584,7 +1584,8 @@ Worked closely with cross-functional teams to ensure LMS features met business r
 
     <div id="toast" class="toast">
     <span id="toastText"></span>
-    <span id="toastCheck" class="toast-check">✔</span>
+    <span id="toastCheck" class="toast-check"></span>
+    <div class="toast-progress"></div>
 </div>
 
 
@@ -1779,9 +1780,19 @@ const toastCheck = document.getElementById('toastCheck');
 const submitBtn = document.getElementById('submitBtn');
 
 function showToast(message, isTyping = false) {
+    const progressBar = toast.querySelector(".toast-progress");
+
     toast.classList.add('show');
     toastCheck.classList.remove('show');
     toastText.textContent = "";
+
+    // reset progress bar animation
+    progressBar.style.transition = "none";
+    progressBar.style.transform = "scaleX(1)";
+    requestAnimationFrame(() => {
+        progressBar.style.transition = "transform 3s linear";
+        progressBar.style.transform = "scaleX(0)";
+    });
 
     if (!isTyping) {
         toastText.textContent = message;
@@ -1806,12 +1817,10 @@ function showToast(message, isTyping = false) {
         if (i === message.length) {
             clearInterval(typingInterval);
 
-            // show checkmark AFTER typing finishes
             setTimeout(() => {
                 toastCheck.classList.add('show');
             }, 300);
 
-            // hide toast after full animation
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);

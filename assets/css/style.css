@@ -851,10 +851,14 @@ span.single-timeline-horizontal.spacial-horizontal-line {width: 88px;}
     color: #fff;
     padding: 12px 18px;
     border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     opacity: 0;
     transform: translateY(20px);
-    transition: all 0.3s ease;
+    transition: 0.3s ease;
     z-index: 9999;
+    min-width: 220px;
 }
 
 .toast.show {
@@ -867,11 +871,33 @@ span.single-timeline-horizontal.spacial-horizontal-line {width: 88px;}
     transform: scale(0);
     color: #4ade80;
     transition: 0.3s ease;
+    font-size: 16px;
 }
 
 .toast-check.show {
     opacity: 1;
     transform: scale(1);
+}
+
+.toast-progress {
+    height: 3px;
+    width: 100%;
+    background: #555;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.toast-progress::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: #4ade80;
+    transform: scaleX(1);
+    transform-origin: left;
 }
 
 .submit-btn.loading {
