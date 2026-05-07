@@ -862,6 +862,18 @@ span.single-timeline-horizontal.spacial-horizontal-line {width: 88px;}
     transform: translateY(0);
 }
 
+.toast-check {
+    opacity: 0;
+    transform: scale(0);
+    color: #4ade80;
+    transition: 0.3s ease;
+}
+
+.toast-check.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
 .submit-btn.loading {
     opacity: 0.7;
     cursor: not-allowed;
