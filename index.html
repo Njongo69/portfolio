@@ -1582,7 +1582,10 @@ Worked closely with cross-functional teams to ensure LMS features met business r
     </button>
 
 
-    <div id="toast" class="toast"></div>
+    <div id="toast" class="toast">
+    <span id="toastText"></span>
+    <span id="toastCheck" class="toast-check">✔</span>
+</div>
 
 
     <script>
@@ -1771,33 +1774,49 @@ Worked closely with cross-functional teams to ensure LMS features met business r
 //Form submission with validation and toast notifications
 const form = document.getElementById('contactForm');
 const toast = document.getElementById('toast');
+const toastText = document.getElementById('toastText');
+const toastCheck = document.getElementById('toastCheck');
 const submitBtn = document.getElementById('submitBtn');
 
 function showToast(message, isTyping = false) {
     toast.classList.add('show');
+    toastCheck.classList.remove('show');
+    toastText.textContent = "";
 
     if (!isTyping) {
-        toast.textContent = message;
+        toastText.textContent = message;
+
+        setTimeout(() => {
+            toastCheck.classList.add('show');
+        }, 300);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+
         return;
     }
 
-    // Typing effect
-    toast.textContent = "";
     let i = 0;
 
     const typingInterval = setInterval(() => {
-        toast.textContent += message.charAt(i);
+        toastText.textContent += message.charAt(i);
         i++;
 
         if (i === message.length) {
             clearInterval(typingInterval);
-        }
-    }, 40); // typing speed
 
-    // auto hide after animation completes
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, message.length * 40 + 1000);
+            // show checkmark AFTER typing finishes
+            setTimeout(() => {
+                toastCheck.classList.add('show');
+            }, 300);
+
+            // hide toast after full animation
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    }, 40);
 }
 
 form.addEventListener('submit', async function (e) {
