@@ -1539,9 +1539,9 @@ Worked closely with cross-functional teams to ensure LMS features met business r
         ></textarea>
     </div>
 
-    <button type="submit" class="submit-btn">
-        Send Message
-    </button>
+    <button type="submit" class="submit-btn" id="submitBtn">
+    Send Message
+</button>
 </form>
                 </div>
                 <div class="contact-info-section fade-in-up">
@@ -1580,6 +1580,10 @@ Worked closely with cross-functional teams to ensure LMS features met business r
     <button class="scroll-top" id="scrollTop">
         <i class="fas fa-chevron-up"></i>
     </button>
+
+
+    <div id="toast" class="toast"></div>
+
 
     <script>
         // Mobile menu functionality with proper toggle
@@ -1764,33 +1768,63 @@ Worked closely with cross-functional teams to ensure LMS features met business r
 
         
 
-
+//Form submission with validation and toast notifications
 const form = document.getElementById('contactForm');
+const toast = document.getElementById('toast');
+const submitBtn = document.getElementById('submitBtn');
+
+function showToast(message, isTyping = false) {
+    toast.classList.add('show');
+
+    if (!isTyping) {
+        toast.textContent = message;
+        return;
+    }
+
+    // Typing effect
+    toast.textContent = "";
+    let i = 0;
+
+    const typingInterval = setInterval(() => {
+        toast.textContent += message.charAt(i);
+        i++;
+
+        if (i === message.length) {
+            clearInterval(typingInterval);
+        }
+    }, 40); // typing speed
+
+    // auto hide after animation completes
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, message.length * 40 + 1000);
+}
 
 form.addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    // Get form data
     const formData = new FormData(form);
 
-    // Basic validation
     const name = formData.get("name");
     const email = formData.get("email");
     const message = formData.get("message");
 
     if (!name || !email || !message) {
-        alert("Please fill in all required fields (Name, Email, Message).");
+        showToast("Please fill in all required fields.");
         return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        alert("Please enter a valid email address.");
+        showToast("Please enter a valid email address.");
         return;
     }
 
     try {
-        // Send to Netlify
+        // Loading state
+        submitBtn.classList.add("loading");
+        submitBtn.textContent = "Sending...";
+
         const response = await fetch("/", {
             method: "POST",
             headers: {
@@ -1800,15 +1834,18 @@ form.addEventListener('submit', async function (e) {
         });
 
         if (response.ok) {
-            alert(`Thank you ${name}! Your message has been sent successfully. I will get back to you at ${email} soon.`);
-            form.reset(); // reset form AFTER successful submit
+            showToast(`Thanks ${name}, message sent successfully! I will get back to you soon on ${email}.`, true);
+            form.reset();
         } else {
-            alert("Something went wrong. Please try again.");
+            showToast("Failed to send message. Try again.");
         }
 
     } catch (error) {
         console.error(error);
-        alert("Error submitting form. Please try again.");
+        showToast("Something went wrong.");
+    } finally {
+        submitBtn.classList.remove("loading");
+        submitBtn.textContent = "Send Message";
     }
 });
         // Initialize animations on page load
