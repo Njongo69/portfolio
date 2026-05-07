@@ -1762,39 +1762,55 @@ Worked closely with cross-functional teams to ensure LMS features met business r
             });
         });
 
-        // Form submission with proper handling
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form data
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-            
-            // Basic validation
-            if (!name || !email || !message) {
-                alert('Please fill in all required fields (Name, Email, and Message).');
-                return;
-            }
-            
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address.');
-                return;
-            }
-            
-            // Show success message
-            alert(`Thank you ${name}! Your message has been received. I will get back to you at ${email} soon.`);
-            
-            // Reset form
-            this.reset();
-            
-            // In a real implementation, you would send the data to a server
-            console.log('Form submitted:', { name, email, subject, message });
+        
+
+
+const form = document.getElementById('contactForm');
+
+form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // Get form data
+    const formData = new FormData(form);
+
+    // Basic validation
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const message = formData.get("message");
+
+    if (!name || !email || !message) {
+        alert("Please fill in all required fields (Name, Email, Message).");
+        return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert("Please enter a valid email address.");
+        return;
+    }
+
+    try {
+        // Send to Netlify
+        const response = await fetch("/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams(formData).toString()
         });
 
+        if (response.ok) {
+            alert(`Thank you ${name}! Your message has been sent successfully. I will get back to you at ${email} soon.`);
+            form.reset(); // reset form AFTER successful submit
+        } else {
+            alert("Something went wrong. Please try again.");
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert("Error submitting form. Please try again.");
+    }
+});
         // Initialize animations on page load
         window.addEventListener('load', () => {
             handleScrollAnimations();
